@@ -11,12 +11,16 @@
   "dependencies": {
     "@next/env": "^15.3.5",
     "@react-google-maps/api": "^2.20.7",
+    "mysql": "^2.18.1",
     "next": "15.3.5",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.25"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/node": "^24.0.12",
     "tailwindcss": "^4"
   }
 }
