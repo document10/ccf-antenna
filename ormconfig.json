@@ -1,0 +1,12 @@
+{
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "admin",
+    "password": "db1234",
+    "database": "antene",
+    "entities": ["src/entity/*.ts"],
+    "migrations": ["src/migration/*.ts"],
+    "bigNumberStrings": false,
+    "synchronize": true
+}

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import MapComp from "./MapComp";
-
+import { Suspense } from "react";
 export const metadata = {
   title: "Antenna CCF",
   description: "Get locations of antennas around the area.",
@@ -9,7 +9,9 @@ export const metadata = {
 export default function Home() {
   return (
     <div className="grid items-center justify-items-center min-h-screen place-content-center font-[family-name:var(--font-geist-sans)]">
-      <MapComp />
+      <Suspense>
+        <MapComp />
+      </Suspense>
     </div>
   );
 }

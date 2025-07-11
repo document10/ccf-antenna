@@ -1,26 +1,31 @@
 {
-  "name": "ccf-antenna",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@next/env": "^15.3.5",
-    "@react-google-maps/api": "^2.20.7",
-    "mysql": "^2.18.1",
-    "next": "15.3.5",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.25"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^24.0.12",
-    "tailwindcss": "^4"
-  }
+   "name": "ccf-antenna",
+   "version": "0.1.0",
+   "private": true,
+   "scripts": {
+      "dev": "next dev --turbopack",
+      "build": "next build",
+      "start": "ts-node src/index.ts",
+      "lint": "next lint",
+      "typeorm": "typeorm-ts-node-commonjs"
+   },
+   "dependencies": {
+      "@next/env": "^15.3.5",
+      "@react-google-maps/api": "^2.20.7",
+      "mysql": "^2.18.1",
+      "next": "15.3.5",
+      "pg": "^8.14.1",
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0",
+      "reflect-metadata": "^0.2.2",
+      "typeorm": "0.3.25"
+   },
+   "devDependencies": {
+      "@tailwindcss/postcss": "^4",
+      "@types/node": "^24.0.12",
+      "@types/react": "19.1.8",
+      "tailwindcss": "^4",
+      "ts-node": "^10.9.2",
+      "typescript": "^5.8.2"
+   }
 }

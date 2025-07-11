@@ -5,32 +5,15 @@ import React from 'react';
 export default function Dashboard() {
   const searchParams = useSearchParams();
   const password = searchParams.get("password");
-  const data = [
-    {
-      "latitude": 47.670162,
-      "longitude": 26.287420,
-      "range": "100m",
-      "operators": ["Operator A", "Operator B"],
-      "generation": "5G",
-      "active": true
-    },
-    {
-      "latitude": 47.071000,
-      "longitude": 26.288000,
-      "range": "200m",
-      "operators": ["Operator C"],
-      "generation": "4G",
-      "active": true
-    },
-    {
-      "latitude": 44.671000,
-      "longitude": 29.288000,
-      "range": "200m",
-      "operators": ["Operator D"],
-      "generation": "3G or older",
-      "active": false
-    }
-  ]
+  const [locations, setLocations] = React.useState([]);
+    React.useEffect(() => {
+      fetch('/api/locations')
+        .then(response => response.json())
+        .then(data => 
+          setLocations(data)
+        )
+        .catch(error => console.error('Error fetching locations:', error))
+    }, [])
   if (password !== process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
     return (
       <div className="grid items-center justify-items-center min-h-screen place-content-center font-[family-name:var(--font-geist-sans)]">
@@ -47,21 +30,23 @@ export default function Dashboard() {
           <table className="min-w-full mt-5">
                 <thead>
                   <tr>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-100 uppercase tracking-wider">Latitude</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">Longitude</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Range</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Operator(s)</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Generation</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">Active</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-100 uppercase tracking-wider">ID</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">Latitude</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Longitude</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Range</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Operator(s)</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">Generation</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-100 uppercase tracking-wider">Active</th>
                   </tr>
                 </thead>
                 <tbody className="bg-gray-50 divide-y divide-green-600">
-                  {data.map((location, index) => (
+                  {locations.map((location, index) => (
                     <tr key={index} className="hover:bg-gray-200 transition-colors duration-300">
+                      <td><p className='text-center text-base text-gray-500 py-2'>{location.id}</p></td>
                       <td><input type="text" className='text-center text-base text-gray-900 py-2' defaultValue={location.latitude} /></td>
                       <td><input type="text" className='text-center text-base text-gray-900 py-2' defaultValue={location.longitude} /></td>
                       <td><input type="text" className='text-center text-base text-gray-900 py-2' defaultValue={location.range} /></td>
-                      <td><input type="text" className='text-center text-base text-gray-900 py-2' defaultValue={location.operators.join(", ")} /></td>
+                      <td><input type="text" className='text-center text-base text-gray-900 py-2' defaultValue={location.operators} /></td>
                       <td><input type="text" className='text-center text-base text-gray-900 py-2' defaultValue={location.generation} /></td>
                       <td><input type="checkbox" className='text-center text-base text-gray-900' defaultChecked={location.active} /></td>
                     </tr>

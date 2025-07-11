@@ -1,7 +1,6 @@
 'use client';
 import React from 'react'
 import { GoogleMap, useJsApiLoader, Marker, Circle } from '@react-google-maps/api'
-
 const containerStyle = {
   width: '100vw',
   height: '100vh',
@@ -52,10 +51,10 @@ function MapComp() {
 
     setMap(map)
   }, [])
-  const [locations, setLocations] = React.useState([]);
   const onUnmount = React.useCallback(function callback(map) {
     setMap(null)
   }, [])
+  const [locations, setLocations] = React.useState([]);
   React.useEffect(() => {
     fetch('/api/locations')
       .then(response => response.json())
