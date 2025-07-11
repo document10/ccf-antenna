@@ -1,3 +1,5 @@
+'use server';
+
 import { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { Antenna } from '../../../entity/Antenna';
@@ -37,8 +39,10 @@ const data = [
   },
 ]
 
+AppDataSource.initialize().catch(error => console.error("Error during Data Source initialization:\n", error));
+
 export async function GET(request) {
-  AppDataSource.initialize().catch(error => console.log("Error during Data Source initialization", error));
+  AppDataSource.initialize().catch(error => console.error("Error during Data Source initialization", error));
   const searchParams = request.nextUrl.searchParams;
   const id = await searchParams.get('id');
   if (id) {
@@ -70,7 +74,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  AppDataSource.initialize().catch(error => console.log("Error during Data Source initialization", error));
+  AppDataSource.initialize().catch(error => console.error("Error during Data Source initialization", error));
   try {
     const body = await request.json();
     console.log(body);
@@ -92,7 +96,7 @@ export async function POST(request) {
 }
 
 export async function DELETE(request) {
-  AppDataSource.initialize().catch(error => console.log("Error during Data Source initialization", error));
+  AppDataSource.initialize().catch(error => console.error("Error during Data Source initialization", error));
   try {
     const searchParams = request.nextUrl.searchParams;
     const id = await searchParams.get('id');
@@ -106,7 +110,7 @@ export async function DELETE(request) {
     }
 
     await AppDataSource.manager.remove(antenna);
-    return NextResponse.json({ message: 'Location deleted successfully' }, { status: 200 });
+    return NextResponse.json({ message: 'Location deleted successfully', }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Failed to delete location' }, { status: 500 });
@@ -114,7 +118,7 @@ export async function DELETE(request) {
 }
 
 export async function PATCH(request) {
-  AppDataSource.initialize().catch(error => console.log("Error during Data Source initialization", error));
+  AppDataSource.initialize().catch(error => console.error("Error during Data Source initialization", error));
   try {
     const body = await request.json();
     const searchParams = request.nextUrl.searchParams;
@@ -136,11 +140,11 @@ export async function PATCH(request) {
     antenna.active = body.active !== undefined ? body.active : antenna.active;
 
     const updatedAntenna = await AppDataSource.manager.save(antenna);
-    
+
     return NextResponse.json(updatedAntenna, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Failed to update location' }, { status: 500 });
   }
-  
+
 }
