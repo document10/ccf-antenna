@@ -85,7 +85,6 @@ function MapSel() {
                     }}
                     draggable={true}
                     onDragEnd={(e) => {
-                        console.log('Marker dragged to:', e.latLng.toJSON())
                         setLatLng({
                             lat: e.latLng.lat(),
                             lng: e.latLng.lng(),

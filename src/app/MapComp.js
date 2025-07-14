@@ -6,11 +6,6 @@ const containerStyle = {
   height: '100vh',
 }
 
-const center = {
-  lat: 47.670162200927734,
-  lng: 26.28742027282715,
-}
-
 // const locations = [
 //   {
 //     "latitude": 47.670162,
@@ -54,6 +49,11 @@ function MapComp() {
   const onUnmount = React.useCallback(function callback(map) {
     setMap(null)
   }, [])
+  const [center, setCenter] = React.useState({
+    lat: 47.670162200927734,
+    lng: 26.28742027282715,
+  })
+  const [zoom, SetZoom] = React.useState(15)
   const [locations, setLocations] = React.useState([]);
   const [selectedLocation, setSelectedLocation] = React.useState(0)
   React.useEffect(() => {
@@ -67,7 +67,15 @@ function MapComp() {
 
   return isLoaded ? (
     <div className="flex flex-col items-end justify-center">
-      <div className="flex flex-col fixed w-fit top-15 right-5 bg-[#000000bb] p-2 z-10 items-center justify-center rounded-2xl text-lg text-white">
+      <div className="flex flex-col fixed w-fit top-15 right-5 bg-[#000000bb] p-2 z-10 rounded-2xl text-lg text-white">
+        <input type='number' min={0} placeholder='Search by ID' className='bg-gray-900 placeholder:text-gray-400 text-green-500' onChange={(event) => {
+          const location = locations.find((v) => v.id == event.target.value)
+          if (location) {
+            setSelectedLocation(location)
+            setCenter({ lat: location.latitude, lng: location.longitude })
+            SetZoom(14)
+          }
+        }} />
         {selectedLocation ? (
           <div>
             {selectedLocation.active ? (
@@ -75,22 +83,23 @@ function MapComp() {
             ) : (
               <h1 className='text-2xl font-bold text-red-500'>Location no. {selectedLocation.id} (Inactive)</h1>
             )}
-
-            <p className='font-bold flex flex-row'>Latitude: <p className='font-light'>{selectedLocation.latitude}</p></p>
-            <p className='font-bold flex flex-row'>Longitude: <p className='font-light'>{selectedLocation.longitude}</p></p>
-            <p className='font-bold flex flex-row'>Range: <p className='font-light'>{selectedLocation.range} meters</p></p>
-            <p className='font-bold flex flex-row'>Generation: <p className='font-light'>{selectedLocation.generation}</p></p>
-            <p className='font-bold flex flex-row'>Operated by: <p className='font-light'>{selectedLocation.operators}</p></p>
+            <h2 className='font-bold flex flex-row'>Latitude: <p className='font-light'>{selectedLocation.latitude}</p></h2>
+            <h2 className='font-bold flex flex-row'>Longitude: <p className='font-light'>{selectedLocation.longitude}</p></h2>
+            <h2 className='font-bold flex flex-row'>Range: <p className='font-light'>{selectedLocation.range} meters</p></h2>
+            <h2 className='font-bold flex flex-row'>Generation: <p className='font-light'>{selectedLocation.generation}</p></h2>
+            <h2 className='font-bold flex flex-row'>Operated by: <p className='font-light'>{selectedLocation.operators}</p></h2>
 
           </div>
         ) : (
-          <h1 className='text2xl'>Select a location to view its details</h1>
+          <div>
+            <h1 className='text2xl'>Select a location to view its details</h1>
+          </div>
         )}
       </div>
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
-        zoom={10}
+        zoom={zoom}
         onLoad={onLoad}
         onUnmount={onUnmount}
       >
