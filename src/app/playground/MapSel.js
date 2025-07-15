@@ -36,7 +36,7 @@ function MapSel() {
     
     return isLoaded ? (
         <div className="flex flex-col items-center size-svh justify-center">
-            <div className="flex flex-row absolute w-fit top-0 bg-[#000000aa] p-2 z-10 items-center justify-center rounded-2xl">
+            <div className="flex flex-row absolute w-fit top-0 bg-[#000000aa] backdrop-blur-sm p-2 z-10 items-center justify-center rounded-2xl">
                 <label className="block text-base font-medium text-gray-100">
                     Latitude:
                     <input

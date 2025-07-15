@@ -6,33 +6,6 @@ const containerStyle = {
   height: '100vh',
 }
 
-// const locations = [
-//   {
-//     "latitude": 47.670162,
-//     "longitude": 26.287420,
-//     "range": 1000,
-//     "operators": "Vodafone, Orange",
-//     "generation": "5G",
-//     "active": true
-//   },
-//   {
-//     "latitude": 47.071000,
-//     "longitude": 26.288000,
-//     "range": 200,
-//     "operators": "Telekom",
-//     "generation": "4G",
-//     "active": true
-//   },
-//   {
-//     "latitude": 44.671000,
-//     "longitude": 29.288000,
-//     "range": 100,
-//     "operators": "Digi Mobile",
-//     "generation": "3G or older",
-//     "active": false
-//   }
-// ]
-
 function MapComp() {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -40,7 +13,6 @@ function MapComp() {
   })
   const [map, setMap] = React.useState(null)
   const onLoad = React.useCallback(function callback(map) {
-    // This is just an example of getting and using the map instance!!! don't just blindly copy!
     const bounds = new window.google.maps.LatLngBounds(center)
     map.fitBounds(bounds)
 
@@ -56,6 +28,8 @@ function MapComp() {
   const [zoom, SetZoom] = React.useState(15)
   const [locations, setLocations] = React.useState([]);
   const [selectedLocation, setSelectedLocation] = React.useState(0)
+  const [query, SetQuery] = React.useState('ID')
+  const [searcResults,setSearchResults]=React.useState([])
   React.useEffect(() => {
     fetch('/api/locations')
       .then(response => response.json())
@@ -67,15 +41,53 @@ function MapComp() {
 
   return isLoaded ? (
     <div className="flex flex-col items-end justify-center">
-      <div className="flex flex-col fixed w-fit top-15 right-5 bg-[#000000bb] p-2 z-10 rounded-2xl text-lg text-white">
-        <input type='number' min={0} placeholder='Search by ID' className='bg-gray-900 placeholder:text-gray-400 text-green-500' onChange={(event) => {
-          const location = locations.find((v) => v.id == event.target.value)
-          if (location) {
-            setSelectedLocation(location)
-            setCenter({ lat: location.latitude, lng: location.longitude })
+      <div className="flex flex-col fixed w-fit top-15 right-5 bg-[#010101aa] backdrop-blur-sm p-2 z-10 rounded-2xl text-lg text-white">
+        <select id="query" className='text-center text-xl p-1 m-1 text-gray-50 bg-fuchsia-500 rounded-2xl hover:bg-fuchsia-700 hover:text-gray-200 transition-all duration-300' onChange={(event) => SetQuery(event.target.value)}>
+          <option value="ID">ID</option>
+          <option value="Op">Operator</option>
+          <option value="Gen">Generation</option>
+        </select>
+        {query == 'Gen' ? (
+          <select className='text-center text-xl text-gray-50 p-1 bg-blue-500 rounded-2xl border-2 border-blue-950 hover:bg-blue-600 hover:text-gray-200 hover:border-blue-800 transition-all duration-300' onChange={(event)=>{
+            setSearchResults(locations.filter((v)=>v.generation== event.target.value))
+          }}>
+            <optgroup label="Outdated" className='text-center'>
+              <option value="1G">1G</option>
+              <option value="2G">2G</option>
+              <option value="3G">3G</option>
+            </optgroup>
+            <optgroup label='In use' className='text-center'>
+              <option value="4G/LTE">4G/LTE</option>
+              <option value="5G">5G</option>
+            </optgroup>
+          </select>
+        ) : (
+          <input type='text' min={0} placeholder='Search locations' className='bg-gray-900 placeholder:text-gray-400 text-green-500 rounded-xl' onChange={(event) => {
+            if(event.target.value)switch (query) {
+              case "ID":
+                setSearchResults(locations.filter((v) => v.id == event.target.value))
+                break;
+              case "Op":
+                setSearchResults(locations.filter((v) => v.operators.includes(event.target.value)))
+                break;
+              default:
+                setSearchResults([])
+                break;
+            }
+            else setSearchResults([])
+          }} />
+        )
+        }
+        {searcResults ?  searcResults.map((value,index)=>(
+          <button key={index} className='text-xl font-bold text-left p-1 text-gray-50 cursor-pointer transition-all duration-300 hover:text-gray-300' onClick={()=>{
+            setSelectedLocation(value)
+            setCenter({ lat: value.latitude, lng: value.longitude })
             SetZoom(14)
-          }
-        }} />
+          }}>{value.id}.{value.operators}({value.generation})</button>
+        ))
+        :(
+          <></>
+        )}
         {selectedLocation ? (
           <div>
             {selectedLocation.active ? (

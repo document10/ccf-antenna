@@ -1,14 +1,10 @@
 'use client';
 import React from 'react'
 import { GoogleMap, useJsApiLoader, Marker, Circle } from '@react-google-maps/api'
-import { eventNames } from 'process';
-import { JsonContains, Not } from 'typeorm';
 const containerStyle = {
     width: '100vw',
     height: '100vh',
 }
-
-
 
 function MapEdit() {
     const { isLoaded } = useJsApiLoader({
@@ -21,7 +17,6 @@ function MapEdit() {
         lng: 26.28742027282715,
     })
     const onLoad = React.useCallback(function callback(map) {
-        // This is just an example of getting and using the map instance!!! don't just blindly copy!
         const bounds = new window.google.maps.LatLngBounds(center)
         map.fitBounds(bounds)
 
@@ -33,6 +28,8 @@ function MapEdit() {
     const [locations, setLocations] = React.useState([]);
     const [selectedLocation, setSelectedLocation] = React.useState(0)
     const [zoom, SetZoom] = React.useState(15)
+    const [query, SetQuery] = React.useState('ID')
+    const [searcResults, setSearchResults] = React.useState([])
     React.useEffect(() => {
         fetch('/api/locations')
             .then(response => response.json())
@@ -43,21 +40,59 @@ function MapEdit() {
     }, [])
     return isLoaded ? (
         <div className="flex flex-col items-center size-svh justify-center">
-            <form className="flex flex-col fixed w-fit top-15 right-5 bg-[#000000bb] p-2 z-10 rounded-2xl text-lg text-white">
-                <input type='number' min={0} placeholder='Search by ID' className='bg-gray-900 placeholder:text-gray-400 text-green-500' onChange={(event) => {
-                    const location = locations.find((v) => v.id == event.target.value)
-                    if (location) {
-                        setSelectedLocation(location)
-                        setCenter({ lat: location.latitude, lng: location.longitude })
-                        SetZoom(15)
-                    }
-                }} />
+            <form className="flex flex-col fixed w-fit top-15 right-5 bg-[#10101099] backdrop-blur-sm p-2 z-10 rounded-2xl text-lg text-white">
+                <select id="query" className='text-center text-xl text-gray-50 bg-fuchsia-500 rounded-2xl hover:bg-fuchsia-700 hover:text-gray-200 transition-all duration-300' onChange={(event) => SetQuery(event.target.value)}>
+                    <option value="ID">ID</option>
+                    <option value="Op">Operator</option>
+                    <option value="Gen">Generation</option>
+                </select>
+                {query == 'Gen' ? (
+                    <select className='text-center text-xl text-gray-50 bg-blue-500 rounded-2xl border-2 border-blue-950 hover:bg-blue-600 hover:text-gray-200 hover:border-blue-800 transition-all duration-300' onChange={(event) => {
+                        setSearchResults(locations.filter((v) => v.generation == event.target.value))
+                    }}>
+                        <optgroup label="Outdated" className='text-center'>
+                            <option value="1G">1G</option>
+                            <option value="2G">2G</option>
+                            <option value="3G">3G</option>
+                        </optgroup>
+                        <optgroup label='In use' className='text-center'>
+                            <option value="4G/LTE">4G/LTE</option>
+                            <option value="5G">5G</option>
+                        </optgroup>
+                    </select>
+                ) : (
+                    <input type='text' min={0} placeholder='Search locations' className='bg-gray-900 placeholder:text-gray-400 text-green-500' onChange={(event) => {
+                        if (event.target.value) switch (query) {
+                            case "ID":
+                                setSearchResults(locations.filter((v) => v.id == event.target.value))
+                                break;
+                            case "Op":
+                                setSearchResults(locations.filter((v) => v.operators.includes(event.target.value)))
+                                break;
+                            default:
+                                setSearchResults([])
+                                break;
+                        }
+                        else setSearchResults([])
+                    }} />
+                )
+                }
+                {searcResults ? searcResults.map((value, index) => (
+                    <button type='button' key={index} className='text-xl font-bold text-center p-1 text-white cursor-pointer transition-all duration-300 hover:text-gray-300' onClick={() => {
+                        setSelectedLocation(value)
+                        setCenter({ lat: value.latitude, lng: value.longitude })
+                        SetZoom(14)
+                    }}>{value.id}.{value.operators}({value.generation})</button>
+                ))
+                    : (
+                        <></>
+                    )}
                 {selectedLocation ? (
                     <div className='flex flex-col'>
                         {selectedLocation.active ? (
                             <h1 className='text-2xl font-bold text-green-600'>Location no. {selectedLocation.id}:{selectedLocation.generation},Active</h1>
                         ) : (
-                            <h1 className='text-2xl font-bold text-red-600'>Location no. {selectedLocation.id}:{selectedLocation.generation},Inctive</h1>
+                            <h1 className='text-2xl font-bold text-red-600'>Location no. {selectedLocation.id}:{selectedLocation.generation},Offline</h1>
                         )}
                         <label className='text-xl text-gray-200 font-medium'>Latitude:<label className='text-center text-base font-light' id={`loc_lat`}>{selectedLocation.latitude}</label></label>
                         <label className='text-xl text-gray-200 font-medium'>Longitude:<label className='text-center text-base font-light' id={`loc_lon`}>{selectedLocation.longitude}</label></label>
@@ -81,7 +116,7 @@ function MapEdit() {
                                 <option value={100}>100</option>
                                 <option value={1000}>1000</option>
                             </select>
-                            <br/>
+                            <br />
                             <label className='text-base font-light'><label className='text-yellow-400'>Yellow:old range</label>;<label className='text-green-500'>green:new range</label></label>
                         </label>
                         <label className='text-xl text-gray-200 font-medium'>Operated by:<label className='text-center text-base font-light' id={`loc_lon`}>{selectedLocation.operators}</label></label>
@@ -99,7 +134,7 @@ function MapEdit() {
                                     window.location.href = "/mapboard?password=admin123"
                                 }).catch(error => console.error('Error updating location:', error));
                             }} >Save changes</button>
-                            <button type='button' className="text-xl font-bold text-center p-1 text-white bg-rose-800 rounded-2xl cursor-pointer transition-all duration-300 hover:bg-rose-700 hover:text-gray-300" onClick={()=>setSelectedLocation(locations.find((v) => v.id == selectedLocation.id))}>Discard changes</button>
+                            <button type='button' className="text-xl font-bold text-center p-1 text-white bg-rose-800 rounded-2xl cursor-pointer transition-all duration-300 hover:bg-rose-700 hover:text-gray-300" onClick={() => setSelectedLocation(locations.find((v) => v.id == selectedLocation.id))}>Discard changes</button>
                         </div>
                     </div>
                 ) : (
@@ -134,7 +169,7 @@ function MapEdit() {
                         onDragEnd={(event) => {
                             setSelectedLocation({ ...selectedLocation, latitude: event.latLng.lat(), longitude: event.latLng.lng() })
                         }}
-                        
+
                     />
                 ))}
                 {locations.map((location, index) => (

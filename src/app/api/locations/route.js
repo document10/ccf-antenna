@@ -1,43 +1,8 @@
 'use server';
 
-import { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { Antenna } from '../../../entity/Antenna';
 import { AppDataSource } from '../../../data-source';
-const data = [
-  {
-    "latitude": 47.670162,
-    "longitude": 26.287420,
-    "range": 1000,
-    "operators": "Vodafone, Orange",
-    "generation": "5G",
-    "active": true
-  },
-  {
-    "latitude": 47.071000,
-    "longitude": 26.288000,
-    "range": 200,
-    "operators": "Telekom",
-    "generation": "4G",
-    "active": true
-  },
-  {
-    "latitude": 44.671000,
-    "longitude": 29.288000,
-    "range": 100,
-    "operators": "Digi Mobile",
-    "generation": "3G or older",
-    "active": false
-  },
-  {
-    "latitude": 42.671040,
-    "longitude": 32.288200,
-    "range": 100,
-    "operators": "Cromtel",
-    "generation": "3G or older",
-    "active": false
-  },
-]
 
 AppDataSource.initialize().catch(error => console.error("Error during Data Source initialization:\n", error));
 

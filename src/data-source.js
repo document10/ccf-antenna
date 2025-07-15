@@ -4,7 +4,7 @@ exports.AppDataSource = void 0;
 require("reflect-metadata");
 var typeorm_1 = require("typeorm");
 var Antenna_1 = require("./entity/Antenna");
-var Antenna_Migration_1 = require("./migration/Antenna_Migration");
+var Antenna1752157961095 = require("./migration/Antenna1752157961095");
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "mysql",
     host: "localhost",
@@ -15,6 +15,6 @@ exports.AppDataSource = new typeorm_1.DataSource({
     synchronize: true,
     logging: false,
     entities: [Antenna_1.Antenna],
-    migrations: [Antenna_Migration_1.Antenna_Migration],
+    migrations: [Antenna1752157961095.Antenna1752157961095],
     subscribers: [],
 });
