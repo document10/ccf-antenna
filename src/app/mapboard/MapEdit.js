@@ -1,6 +1,7 @@
 'use client';
 import React from 'react'
 import { GoogleMap, useJsApiLoader, Marker, Circle } from '@react-google-maps/api'
+import Image from 'next/image';
 const containerStyle = {
     width: '100vw',
     height: '100vh',
@@ -26,10 +27,19 @@ function MapEdit() {
         setMap(null)
     }, [])
     const [locations, setLocations] = React.useState([]);
+    const [operators, setOperators] = React.useState([])
     const [selectedLocation, setSelectedLocation] = React.useState(0)
     const [zoom, SetZoom] = React.useState(15)
     const [query, SetQuery] = React.useState('ID')
     const [searcResults, setSearchResults] = React.useState([])
+    React.useEffect(() => {
+        fetch('/api/operators')
+            .then(response => response.json())
+            .then(data =>
+                setOperators(data)
+            )
+            .catch(error => console.error('Error fetching operators:', error))
+    }, [])
     React.useEffect(() => {
         fetch('/api/locations')
             .then(response => response.json())
@@ -47,9 +57,7 @@ function MapEdit() {
                     <option value="Gen">Generation</option>
                 </select>
                 {query == 'Gen' ? (
-                    <select className='text-center text-xl text-gray-50 bg-blue-500 rounded-2xl border-2 border-blue-950 hover:bg-blue-600 hover:text-gray-200 hover:border-blue-800 transition-all duration-300' onChange={(event) => {
-                        setSearchResults(locations.filter((v) => v.generation == event.target.value))
-                    }}>
+                    <select className='text-center text-xl text-gray-50 p-1 bg-blue-500 rounded-2xl border-2 border-blue-950 hover:bg-blue-600 hover:text-gray-200 hover:border-blue-800 transition-all duration-300' onChange={(event) => { setSearchResults(locations.filter((v) => v.generation == event.target.value)) }}>
                         <optgroup label="Outdated" className='text-center'>
                             <option value="1G">1G</option>
                             <option value="2G">2G</option>
@@ -60,29 +68,28 @@ function MapEdit() {
                             <option value="5G">5G</option>
                         </optgroup>
                     </select>
+                ) : (query == 'ID' ? (
+                    (
+                        <input type='text' min={0} placeholder='Search locations' className='bg-gray-900 placeholder:text-gray-400 text-green-500 rounded-xl' onChange={(event) => {
+                            if (event.target.value) setSearchResults(locations.filter((v) => v.id == event.target.value));
+                            else setSearchResults([]);
+                        }} />
+                    )
                 ) : (
-                    <input type='text' min={0} placeholder='Search locations' className='bg-gray-900 placeholder:text-gray-400 text-green-500' onChange={(event) => {
-                        if (event.target.value) switch (query) {
-                            case "ID":
-                                setSearchResults(locations.filter((v) => v.id == event.target.value))
-                                break;
-                            case "Op":
-                                setSearchResults(locations.filter((v) => v.operators.includes(event.target.value)))
-                                break;
-                            default:
-                                setSearchResults([])
-                                break;
-                        }
-                        else setSearchResults([])
-                    }} />
-                )
+                    <select className='text-center text-2xl text-slate-800 bg-lime-400 rounded-2xl border-2 border-lime-900 hover:bg-lime-500 hover:text-slate-700 hover:border-lime-700 transition-all duration-300' id={`loc${location.id}_op`} defaultValue={location.operatorId} onChange={e => { setSearchResults(locations.filter((v) => v.operatorId == e.target.value)) }}>
+                        <option key={-1} value={-1}>Unknown</option>
+                        {operators.map((op, index) => (
+                            <option value={op.id} key={op.id}>{op.name}</option>
+                        ))}
+                    </select>
+                ))
                 }
                 {searcResults ? searcResults.map((value, index) => (
                     <button type='button' key={index} className='text-xl font-bold text-center p-1 text-white cursor-pointer transition-all duration-300 hover:text-gray-300' onClick={() => {
                         setSelectedLocation(value)
                         setCenter({ lat: value.latitude, lng: value.longitude })
                         SetZoom(14)
-                    }}>{value.id}.{value.operators}({value.generation})</button>
+                    }}>{value.id}.({value.generation})</button>
                 ))
                     : (
                         <></>
@@ -119,23 +126,31 @@ function MapEdit() {
                             <br />
                             <label className='text-base font-light'><label className='text-yellow-400'>Yellow:old range</label>;<label className='text-green-500'>green:new range</label></label>
                         </label>
-                        <label className='text-xl text-gray-200 font-medium'>Operated by:<label className='text-center text-base font-light' id={`loc_lon`}>{selectedLocation.operators}</label></label>
-                        <div className='flex flex-row'>
-                            <button type='button' className="text-xl font-bold text-center p-1 text-white bg-green-800 rounded-2xl cursor-pointer transition-all duration-300 hover:bg-green-900 hover:text-gray-300" onClick={(event) => {
-                                console.log(JSON.stringify(selectedLocation))
-                                fetch(`/api/locations/?id=${selectedLocation.id}`, {
-                                    method: 'PATCH',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify(selectedLocation),
-                                }).then(response => {
-                                    console.log("Location updated:", response)
-                                    window.location.href = "/mapboard?password=admin123"
-                                }).catch(error => console.error('Error updating location:', error));
-                            }} >Save changes</button>
-                            <button type='button' className="text-xl font-bold text-center p-1 text-white bg-rose-800 rounded-2xl cursor-pointer transition-all duration-300 hover:bg-rose-700 hover:text-gray-300" onClick={() => setSelectedLocation(locations.find((v) => v.id == selectedLocation.id))}>Discard changes</button>
-                        </div>
+                        <label className='text-xl text-gray-200 font-medium'>Operated by:<label className='text-center text-base font-light' id={`loc_lon`}>{selectedLocation.operatorId!=-1?operators.find(op => op.id == selectedLocation.operatorId).name:"Unknown"}</label></label>
+                        <button type='button' className="text-xl font-bold text-center p-1 text-white bg-green-800 rounded-2xl cursor-pointer transition-all duration-300 hover:bg-green-900 hover:text-gray-300" onClick={(event) => {
+                            console.log(JSON.stringify(selectedLocation))
+                            fetch(`/api/locations/?id=${selectedLocation.id}`, {
+                                method: 'PATCH',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(selectedLocation),
+                            }).then(response => {
+                                console.log("Location updated:", response)
+                                window.location.href = "/mapboard?password=admin123"
+                            }).catch(error => console.error('Error updating location:', error));
+                        }} >Save changes</button>
+                        <button type='button' className="text-xl font-bold text-center p-1 text-white bg-rose-800 rounded-2xl cursor-pointer transition-all duration-300 hover:bg-rose-700 hover:text-gray-300" onClick={() => setSelectedLocation(locations.find((v) => v.id == selectedLocation.id))}>Discard changes</button>
+                        <button type='button' className="text-xl font-bold text-center p-1 text-white bg-red-600 rounded-2xl cursor-pointer transition-all duration-300 hover:bg-red-700 hover:text-gray-300" onClick={() => {
+                            setLocations(locations.filter(loc=>loc.id!=selectedLocation.id))
+                            fetch(`/api/locations/?id=${selectedLocation.id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ id: selectedLocation.id }),
+                            }).then(response => console.log("Location deleted:", response)).catch(error => console.error('Error deleting location:', error));
+                        }}>Delete location</button>
                     </div>
                 ) : (
                     <div>

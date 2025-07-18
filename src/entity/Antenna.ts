@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, ManyToOne, JoinTable, Relation, ForeignKey } from "typeorm"
+import { Operator } from "./Operator"
 import "reflect-metadata"
 
 @Entity()
@@ -16,8 +17,8 @@ export class Antenna {
     @Column('int')
     range : number
 
-    @Column('varchar', { length: 255 })
-    operators : string
+    @Column('int')
+    operatorId : number
 
     @Column('varchar', { length: 255 })
     generation : string

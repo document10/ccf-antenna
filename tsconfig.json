@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "lib": [
-      "esnext"
+      "esnext",
+      "dom",
+      "dom.iterable"
     ],
     "target": "esnext",
     "module": "commonjs",
@@ -14,7 +16,6 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
-    "noEmit": true,
     "incremental": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -24,14 +25,15 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "noEmit": false
   },
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "src/app/api/operators/route.js", "src/app/api/locations/route.js"  ],
   "exclude": [
     "node_modules"
   ]
