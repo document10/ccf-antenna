@@ -14,7 +14,7 @@ export async function GET(request) {
     if (id) {
       const location = await AppDataSource.manager.findOne(Antenna, { where: { id } });
       if (location) {
-        const operator = await AppDataSource.manager.findOne(Operator, { where: { id: location.operatorId } })||{"name":"Unknown"};
+        const operator = await AppDataSource.manager.findOne(Operator, { where: { id: location.operatorId } }) || { "name": "Unknown" };
         const response = {
           id: location.id,
           latitude: Number(location.latitude),
@@ -31,7 +31,7 @@ export async function GET(request) {
     }
     else {
       const locations = (await AppDataSource.manager.find(Antenna));
-      const response = locations.map((location)=>{
+      const response = locations.map((location) => {
         return {
           id: location.id,
           latitude: Number(location.latitude),
@@ -46,7 +46,8 @@ export async function GET(request) {
     }
   }
   catch {
-
+    console.error(error);
+    return NextResponse.json({ error: 'Failed to create location' }, { status: 500 });
   }
 
 }
@@ -66,7 +67,7 @@ export async function POST(request) {
     antenna.active = body.active;
 
     const newAntenna = await AppDataSource.manager.save(antenna);
-    return NextResponse.json({ message: "Antenna created succesfully.",result:antenna }, { status: 201 });
+    return NextResponse.json({ message: "Antenna created succesfully.", result: antenna }, { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Failed to create location' }, { status: 500 });
@@ -88,7 +89,7 @@ export async function DELETE(request) {
     }
 
     const deletedLocation = await AppDataSource.manager.remove(antenna);
-    return NextResponse.json({ message: 'Location deleted successfully',location:deletedLocation }, { status: 200 });
+    return NextResponse.json({ message: 'Location deleted successfully', location: deletedLocation }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Failed to delete location' }, { status: 500 });

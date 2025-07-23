@@ -12,28 +12,16 @@ const center = {
 }
 
 function MapSel() {
-    const { isLoaded } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-    })
+    const { isLoaded } = useJsApiLoader({ id: 'google-map-script', googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY, })
     const [map, setMap] = React.useState(null)
     const onLoad = React.useCallback(function callback(map) {
-        // This is just an example of getting and using the map instance!!! don't just blindly copy!
         const bounds = new window.google.maps.LatLngBounds(center)
         map.fitBounds(bounds)
-
         setMap(map)
     }, [])
-    const onUnmount = React.useCallback(function callback(map) {
-        setMap(null)
-    }, [])
-
-    const [latLng, setLatLng] = React.useState({
-        lat: center.lat,
-        lng: center.lng,
-    });
+    const onUnmount = React.useCallback(function callback(map) { setMap(null) }, [])
+    const [latLng, setLatLng] = React.useState({ lat: center.lat, lng: center.lng, });
     const [radius, setRadius] = React.useState(0);
-    
     return isLoaded ? (
         <div className="flex flex-col items-center size-svh justify-center">
             <div className="flex flex-row absolute w-fit top-0 bg-[#000000aa] backdrop-blur-sm p-2 z-10 items-center justify-center rounded-2xl">
@@ -70,13 +58,7 @@ function MapSel() {
                     />
                 </label>
             </div>
-            <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={center}
-                zoom={10}
-                onLoad={onLoad}
-                onUnmount={onUnmount}
-            >
+            <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10} onLoad={onLoad} onUnmount={onUnmount}>
                 <Marker
                     animation={window.google.maps.Animation.DROP}
                     position={{
@@ -91,7 +73,6 @@ function MapSel() {
                         });
                     }}
                     title='Drag me to change location'
-
                 />
                 <Circle
                     center={{
@@ -105,8 +86,7 @@ function MapSel() {
                         strokeColor: 'green',
                         strokeOpacity: 0.8,
                         strokeWeight: 1,
-                    }}
-                />
+                    }}/>
 
             </GoogleMap>
         </div>

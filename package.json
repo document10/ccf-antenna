@@ -12,6 +12,7 @@
    "dependencies": {
       "@next/env": "^15.3.5",
       "@react-google-maps/api": "^2.20.7",
+      "@vercel/og": "^0.8.2",
       "downloadjs": "^1.4.7",
       "mysql": "^2.18.1",
       "next": "15.3.5",
@@ -24,7 +25,9 @@
    "devDependencies": {
       "@tailwindcss/postcss": "^4",
       "@types/node": "^24.0.12",
+      "@types/qrcode": "^1.5.5",
       "@types/react": "19.1.8",
+      "qrcode": "^1.5.4",
       "tailwindcss": "^4",
       "ts-node": "^10.9.2",
       "typescript": "^5.8.2"

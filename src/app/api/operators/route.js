@@ -1,3 +1,5 @@
+'use server';
+
 import { NextResponse } from 'next/server';
 import { Operator } from '../../../entity/Operator';
 import { AppDataSource } from '../../../data-source';
@@ -50,12 +52,12 @@ export async function DELETE(request) {
     const operator = await AppDataSource.manager.findOne(Operator, { where: { id } })
     if (!operator) return NextResponse.json({ error: "Operator not found" }, { status: 404 });
     const antennas = await AppDataSource.manager.find(Antenna)
-    antennas.forEach(async(ant,index)=>{
-      if(ant.operatorId==operator.id){
+    antennas.forEach(async (ant, index) => {
+      if (ant.operatorId == operator.id) {
         let newAnt = ant;
-        newAnt.operatorId=-1;
+        newAnt.operatorId = -1;
         await AppDataSource.manager.save(newAnt)
-        console.log(newAnt)
+        console.log("Previous antenna modified", newAnt)
       }
     })
     await AppDataSource.manager.remove(operator);
@@ -88,34 +90,3 @@ export async function PATCH(request) {
     return NextResponse.json({ error: 'Failed to update operator' }, { status: 500 });
   }
 }
-// export async function PATCH(request) {
-//   AppDataSource.initialize().catch(error => console.error("Error during Data Source initialization", error));
-//   try {
-//     const body = await request.json();
-//     const searchParams = request.nextUrl.searchParams;
-//     const id = await searchParams.get('id');
-//     if (!id) {
-//       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
-//     }
-
-//     const antenna = await AppDataSource.manager.findOne(Antenna, { where: { id } });
-//     if (!antenna) {
-//       return NextResponse.json({ error: 'Location not found' }, { status: 404 });
-//     }
-
-//     antenna.latitude = body.latitude || antenna.latitude;
-//     antenna.longitude = body.longitude || antenna.longitude;
-//     antenna.range = body.range || antenna.range;
-//     antenna.operator = body.operator || antenna.operator;
-//     antenna.generation = body.generation || antenna.generation;
-//     antenna.active = body.active !== undefined ? body.active : antenna.active;
-
-//     const updatedAntenna = await AppDataSource.manager.save(antenna);
-
-//     return NextResponse.json(updatedAntenna, { status: 200 });
-//   } catch (error) {
-//     console.error(error);
-//     return NextResponse.json({ error: 'Failed to update location' }, { status: 500 });
-//   }
-
-// }

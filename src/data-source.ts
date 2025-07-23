@@ -11,7 +11,6 @@ export const AppDataSource = new DataSource({
     username: "admin",
     password: "db1234",
     database: "antene",
-    synchronize: true,
     logging: false,
     entities: [Antenna,Operator],
     migrations: [Antenna1752729643425,Operator1752729585120],

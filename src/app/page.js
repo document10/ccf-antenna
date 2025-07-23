@@ -1,6 +1,8 @@
 import Image from "next/image";
 import MapComp from "./MapComp";
 import { Suspense } from "react";
+import { Metadata } from 'next'
+
 export const metadata = {
   title: "Antenna CCF",
   description: "Get locations of antennas around the area.",
