@@ -2,6 +2,7 @@
 import React from 'react'
 import { GoogleMap, useJsApiLoader, Marker, Circle } from '@react-google-maps/api'
 import Image from 'next/image';
+import { Operator } from '../entity/Operator';
 const containerStyle = {
   width: '100vw',
   height: '100vh',
@@ -36,15 +37,21 @@ function MapComp() {
       .then(data => setLocations(data))
       .catch(error => console.error('Error fetching locations:', error))
   }, [])
+  /**
+   * Returns information about an operator
+   * @param {Operator} op 
+   * @returns {string}
+   */
   const opInfo = (op) => `${op.name} (from ${op.origin})`
+  
   return isLoaded ? (
     <div className="flex flex-col items-end justify-center">
       <div className="flex flex-col fixed w-fit top-14 right-3 md:top-2 md:right-3 bg-[#010101aa] backdrop-blur-sm p-2 z-10 rounded-2xl text-lg text-white shadow-md/50 shadow-blue-500">
         {minimized ? (
-          <button className='flex flex-row gap-1 justify-center bg-emerald-500 shadow-md/50 shadow-emerald-300 transition-all duration-500 hover:text-gray-700 hover:bg-emerald-400 rounded-2xl cursor-pointer text-base p-2' onClick={(e) => SetMinimized(!minimized)}><Image src='/maximize.svg' width={20} height={20} alt='plus' />Expand</button>
+          <button className='flex flex-row gap-1 justify-center bg-emerald-500 shadow-md/50 shadow-emerald-300 transition-all duration-500 hover:text-gray-700 hover:bg-emerald-400 rounded-2xl cursor-pointer text-base p-2' onClick={(e) => SetMinimized(!minimized)}><Image src='/maximize.svg' width={20} height={20} alt='plus' fetchPriority='low' />Expand</button>
         ) : (
           <div className='flex flex-col' id='expanded'>
-            <button className='flex flex-row justify-center gap-2 text-gray-50 bg-emerald-500 transition-all duration-500 hover:text-gray-200 hover:bg-emerald-600 shadow-md/50 shadow-emerald-300 rounded-xl cursor-pointer p-1 mb-2' onClick={() => SetMinimized(!minimized)}><Image src='/minimize.svg' width={20} height={20} alt='plus' />Collapse</button>
+            <button className='flex flex-row justify-center gap-2 text-gray-50 bg-emerald-500 transition-all duration-500 hover:text-gray-200 hover:bg-emerald-600 shadow-md/50 shadow-emerald-300 rounded-xl cursor-pointer p-1 mb-2' onClick={() => SetMinimized(!minimized)}><Image src='/minimize.svg' width={20} height={20} alt='plus' fetchPriority='low' />Collapse</button>
             <select id="query" className='text-center text-xl py-1 my-1 text-gray-50 bg-fuchsia-500 rounded-2xl shadow-md/50 shadow-fuchsia-700 hover:bg-fuchsia-700 hover:text-gray-200 transition-all duration-300' onChange={(event) => SetQuery(event.target.value)}>
               <option value="ID">ID</option>
               <option value="Op">Operator</option>
@@ -74,11 +81,11 @@ function MapComp() {
               </select>
             ))}
             {searcResults ? searcResults.map((value, index) => (
-              <button key={index} className='text-xl font-bold text-center  my-2 md:my-1 text-gray-50 cursor-pointer transition-all duration-300 hover:text-gray-300' onClick={() => {
+              <button key={index} className='text-xl flex flex-row font-bold text-center my-2 md:my-1 text-gray-50 cursor-pointer transition-all duration-300 hover:text-gray-300' onClick={() => {
                 setSelectedLocation(value);
                 setCenter({ lat: value.latitude, lng: value.longitude });
                 SetZoom(14);
-              }}>{value.id}.{value.operatorId}({value.generation})</button>
+              }}>{value.id}.{value.operatorId}({value.generation}){value.active?(<Image src='/online.svg' width={16} height={16} alt='ID' className='invert mx-1' />):<Image src='/offline.svg' width={16} height={16} alt='ID' className='invert mx-1' />}</button>
             ))
               : (
                 <></>
@@ -92,9 +99,9 @@ function MapComp() {
                 <h2 className='font-bold flex flex-row'>Longitude: <p className='font-light px-2'>{selectedLocation.longitude}</p></h2>
                 <h2 className='font-bold flex flex-row'>Range: <p className='font-light px-2'>{selectedLocation.range} meters</p></h2>
                 <h2 className='font-bold flex flex-row'>Generation: <p className='font-light px-2'>{selectedLocation.generation}</p></h2>
-                <h2 className='font-bold flex flex-row'>Operated by: {selectedLocation.operatorId != -1 ? (<a className='font-light px-2 underline' href={`http://192.168.0.148:3000/api/images?operator=${selectedLocation.operatorId}`} download={`operator_${selectedLocation.operatorId}.png`} title='Download Operator Info'>{opInfo(operators.find(op => op.id == selectedLocation.operatorId))}</a>) : (<p className='font-medium text-gray-400 px-2'>Unknown</p>)}</h2>
+                <h2 className='font-bold flex flex-row'>Operated by: {selectedLocation.operatorId != -1 ? (<a className='font-light px-2 underline' href={`/api/images?operator=${selectedLocation.operatorId}`} download={`operator_${selectedLocation.operatorId}.png`} title='Download Operator Info'>{opInfo(operators.find(op => op.id == selectedLocation.operatorId))}</a>) : (<p className='font-medium text-gray-400 px-2'>Unknown</p>)}</h2>
                 <Image src={`/api/images?location=${selectedLocation.id}&qr=1`} width={256} height={256} alt='qrcode' className='m-4' />
-                <a className='flex flex-row justify-center gap-2 bg-gray-100 text-gray-950 shadow-md/50 shadow-gray-200 rounded-xl cursor-pointer p-1 transition-all duration-300 hover:bg-gray-300 hover:text-gray-800' href={`http://192.168.0.148:3000/api/images?location=${selectedLocation.id}`} download={`location_${selectedLocation.id}.png`}>Download Info</a>
+                <a className='flex flex-row justify-center gap-2 bg-gray-100 text-gray-950 shadow-md/50 shadow-gray-200 rounded-xl cursor-pointer p-1 transition-all duration-300 hover:bg-gray-300 hover:text-gray-800' href={`/api/images?location=${selectedLocation.id}`} download={`location_${selectedLocation.id}.png`}>Download Info</a>
               </div>
             ) : (<h1 className='text2xl'>Select a location to view its details</h1>)}
           </div>

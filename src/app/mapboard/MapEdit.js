@@ -90,20 +90,20 @@ function MapEdit() {
                         {selectedLocation ? (
                             <div className='flex flex-col'>
                                 {selectedLocation.active ?
-                  (<h1 className='text-2xl font-bold text-green-500 flex flex-row'><Image src='/online.svg' width={16} height={16} alt='ID' className='invert mx-2' />Location no. {selectedLocation.id} (Active)</h1>)
-                  : (<h1 className='text-2xl font-bold text-red-500 flex flex-row'><Image src='/offline.svg' width={16} height={16} alt='ID' className='invert mx-2' />Location no. {selectedLocation.id} (Inactive)</h1>)}
+                                    (<h1 className='text-2xl font-bold text-green-500 flex flex-row'><Image src='/online.svg' width={16} height={16} alt='ID' className='invert mx-2' />Location no. {selectedLocation.id} (Active)</h1>)
+                                    : (<h1 className='text-2xl font-bold text-red-500 flex flex-row'><Image src='/offline.svg' width={16} height={16} alt='ID' className='invert mx-2' />Location no. {selectedLocation.id} (Inactive)</h1>)}
                                 <label className='text-xl text-gray-200 font-medium'>Latitude:<label className='text-center text-base font-light px-2' id={`loc_lat`}>{selectedLocation.latitude}</label></label>
                                 <label className='text-xl text-gray-200 font-medium'>Longitude:<label className='text-center text-base font-light px-2' id={`loc_lon`}>{selectedLocation.longitude}</label></label>
                                 <label className='text-xl text-gray-200 font-medium'>
                                     Range:
                                     <button type='button' className="text-xl font-bold text-center w-8 h-8 text-white bg-red-800 rounded-2xl shadow-md/50 shadow-red-700 cursor-pointer transition-all duration-300 hover:bg-red-900 hover:text-gray-300 ml-2" onClick={() => {
                                         const newRange = Math.max(selectedLocation.range - Number(document.getElementById('inc').value), 100)
-                                        setSelectedLocation({...selectedLocation, range: newRange})
+                                        setSelectedLocation({ ...selectedLocation, range: newRange })
                                     }}>-</button>
                                     <label className='text-center text-base font-light mx-2' id={`loc_ran`}>{selectedLocation.range}</label>
                                     <button type='button' className="text-xl font-bold text-center w-8 h-8 text-white bg-green-800 rounded-2xl shadow-md/50 shadow-green-700 cursor-pointer transition-all duration-300 hover:bg-green-900 hover:text-gray-300" onClick={() => {
                                         const newRange = Math.max(selectedLocation.range + Number(document.getElementById('inc').value), 100)
-                                        setSelectedLocation({...selectedLocation, range: newRange})
+                                        setSelectedLocation({ ...selectedLocation, range: newRange })
                                     }}>+</button>
                                     <select id='inc' className='text-center text-xl text-gray-50 bg-purple-500 rounded-2xl shadow-md/50 shadow-purple-600 hover:bg-purple-600 hover:text-gray-200 transition-all duration-300 ml-2' defaultValue={10}>
                                         <option value={5}>5</option>
@@ -111,9 +111,8 @@ function MapEdit() {
                                         <option value={100}>100</option>
                                         <option value={1000}>1000</option>
                                     </select>
-                                    <br />
-                                    <label className='text-base font-light'><label className='text-yellow-400 px-2'>Yellow:old range</label>;<label className='text-green-500 px-2'>green:new range</label></label>
                                 </label>
+                                <label className='text-base font-light'><label className='text-yellow-400 pr-2'>Yellow:old range</label><label className='text-green-500'>green:new range</label></label>
                                 <label className='text-xl text-gray-200 font-medium'>Operated by:<label className='text-center text-base font-light px-2' id={`loc_lon`}>{selectedLocation.operatorId != -1 ? operators.find(op => op.id == selectedLocation.operatorId).name : "Unknown"}</label></label>
                                 <button type='button' className="text-xl font-bold text-center p-1 my-1 text-white bg-green-800 shadow-md/50 shadow-lime-800 rounded-2xl cursor-pointer transition-all duration-300 hover:bg-green-900 hover:text-gray-300" onClick={(event) => {
                                     console.log(JSON.stringify(selectedLocation))

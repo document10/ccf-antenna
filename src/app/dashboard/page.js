@@ -1,8 +1,9 @@
 "use client";
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image';
-import { eventNames } from 'process';
 import React, { Suspense } from 'react';
+import { Antenna } from '../../entity/Antenna';
+import { Operator } from '../../entity/Operator';
 
 export default function Dashboard() {
   const searchParams = useSearchParams();
@@ -29,7 +30,19 @@ export default function Dashboard() {
         .then(data => setLocations(data))
         .catch(error => console.error('Error fetching locations:', error))
     }, [])
+    /**
+     * Checks if two locations are identical (ignoring IDs)
+     * @param {Antenna} x 
+     * @param {Antenna} y 
+     * @returns {Boolean}
+     */
     const sameLoc = (x, y) => { return x.latitude == y.latitude && x.longitude == y.longitude && x.range == y.range && x.operatorId == y.operatorId && x.active == y.active && x.generation == y.generation }
+    /**
+     * Checks if two operators are identical (ignoring IDs)
+     * @param {Operator} x 
+     * @param {Operator} y 
+     * @returns {Boolean}
+     */
     const sameOp = (x, y) => { return x.name == y.name && x.origin == y.origin }
     return (
       <div className="grid items-center justify-items-center min-h-screen place-content-center font-[family-name:var(--font-geist-sans)]">

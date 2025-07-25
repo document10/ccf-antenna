@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Relation, JoinColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column} from "typeorm"
 import "reflect-metadata"
-import { Antenna } from "./Antenna"
 
 @Entity()
 export class Operator {

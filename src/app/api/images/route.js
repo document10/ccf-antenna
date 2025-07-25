@@ -21,7 +21,7 @@ export async function GET(request) {
                 const antOp = await AppDataSource.manager.findOne(Operator, { where: { id: foundLocation.operatorId } }) || { id: -1, name: "Unknown", origin: "?" };
                 if (qrcode) {
                     const img = await QRCode.toBuffer(`Location #${foundLocation.id}\nLatitude: ${foundLocation.latitude}\nLongitude: ${foundLocation.longitude}\nRange: ${foundLocation.range} meters\nGeneration: ${foundLocation.generation}\nStatus: ${foundLocation.active ? "Online" : "Offline"}\nOperated by: ${antOp.name} (${antOp.id}) from ${antOp.origin}`)
-                    return new NextResponse(img, { headers: { 'Content-Type': 'image/png' },status:200 })
+                    return new NextResponse(img, { headers: { 'Content-Type': 'image/png' }, status: 200 })
                 }
                 else return new ImageResponse(
                     (
@@ -94,7 +94,7 @@ export async function GET(request) {
             if (foundOperator) {
                 if (qrcode) {
                     const img = await QRCode.toBuffer(`Operator ${foundOperator.name} [${foundOperator.id}] from ${foundOperator.origin}`)
-                    return new NextResponse(img, { headers: { 'Content-Type': 'image/png' },status:200 })
+                    return new NextResponse(img, { headers: { 'Content-Type': 'image/png' }, status: 200 })
                 }
                 else return new ImageResponse((
                     <div style={{

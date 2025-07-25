@@ -19,8 +19,7 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  const projectDir = process.cwd()
-  loadEnvConfig(projectDir)
+  loadEnvConfig(process.cwd())
   return (
     <html lang="en">
       <head>
@@ -28,6 +27,8 @@ export default function RootLayout({ children }) {
         <meta name="og:title" content={metadata.title}/>
         <meta name="og:description" content={metadata.description}/>
         <title>{metadata.title}</title>
+        <link rel='preconnect' href="https://maps.googleapis.com"/>
+        <link rel='preconnect' href="https://maps.gstatic.com"/>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}

@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, ManyToOne, JoinTable, Relation, ForeignKey } from "typeorm"
-import { Operator } from "./Operator"
+import { Entity, PrimaryGeneratedColumn, Column} from "typeorm"
 import "reflect-metadata"
 
 @Entity()
